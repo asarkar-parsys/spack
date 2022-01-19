@@ -1,11 +1,10 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack import *
 from spack.pkg.builtin.boost import Boost
-
 
 class Libkml(CMakePackage):
     """Reference implementation of OGC KML 2.2."""
@@ -26,11 +25,8 @@ class Libkml(CMakePackage):
 
     # See DEPENDENCIES
     depends_on('cmake@2.8:', type='build')
-    depends_on('boost@1.44.0:')
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
+    #FIXME: there does not seem to be any dependency on boost
+    depends_on('boost@1.44.0:') 
     depends_on(Boost.with_default_variants)
     depends_on('expat@2.1.0:')
     depends_on('minizip@1.2.8:')
