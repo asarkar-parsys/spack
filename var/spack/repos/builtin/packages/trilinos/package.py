@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -9,10 +9,9 @@ import sys
 from spack import *
 from spack.build_environment import dso_suffix
 from spack.error import NoHeadersError
-from spack.pkg.builtin.boost import Boost
 from spack.operating_systems.mac_os import macos_version
-from spack.pkg.builtin.boost import Boost
 from spack.pkg.builtin.kokkos import Kokkos
+from spack.pkg.builtin.boost import Boost
 
 # Trilinos is complicated to build, as an inspiration a couple of links to
 # other repositories which build it:
@@ -24,7 +23,7 @@ from spack.pkg.builtin.kokkos import Kokkos
 # https://github.com/trilinos/Trilinos/issues/175
 
 
-class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
+class Trilinos(CMakePackage, CudaPackage):
     """The Trilinos Project is an effort to develop algorithms and enabling
     technologies within an object-oriented software framework for the solution
     of large-scale, complex multi-physics engineering and scientific problems.
@@ -194,7 +193,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     # Tpetra packages
     with when('~kokkos'):
         conflicts('+cuda')
-        conflicts('+rocm')
         conflicts('+tpetra')
         conflicts('+intrepid2')
         conflicts('+phalanx')
@@ -293,12 +291,8 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on('adios2', when='+adios2')
     depends_on('blas')
-    depends_on('boost', when='+boost')
-    depends_on('cgns', when='+exodus')
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
     depends_on(Boost.with_default_variants, when='+boost')
+    depends_on('cgns', when='+exodus')
     depends_on('hdf5+hl', when='+hdf5')
     depends_on('hypre~internal-superlu~int64', when='+hypre')
     depends_on('kokkos-nvcc-wrapper', when='+wrapper')
@@ -417,17 +411,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 env.set('MPICXX_CXX', spec["kokkos-nvcc-wrapper"].kokkos_cxx)
             else:
                 env.set('CXX', spec["kokkos-nvcc-wrapper"].kokkos_cxx)
-
-        if '+rocm' in spec:
-            if '+mpi' in spec:
-                env.set('OMPI_CXX', self.spec['hip'].hipcc)
-                env.set('MPICH_CXX', self.spec['hip'].hipcc)
-                env.set('MPICXX_CXX', self.spec['hip'].hipcc)
-            else:
-                env.set('CXX', self.spec['hip'].hipcc)
-            if '+stk' in spec:
-                # Using CXXFLAGS for hipcc which doesn't use flags in the spack wrappers
-                env.set('CXXFLAGS', '-DSTK_NO_BOOST_STACKTRACE')
 
     def cmake_args(self):
         options = []
@@ -734,22 +717,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                     define("Kokkos_ARCH_" + arch_map[arch].upper(), True)
                     for arch in spec.variants['cuda_arch'].value
                 )
-
-            if '+rocm' in spec:
-                options.extend([
-                    define_kok_enable('ROCM', False),
-                    define_kok_enable('HIP', True)
-                ])
-                if '+tpetra' in spec:
-                    options.append(define('Tpetra_INST_HIP', True))
-                amdgpu_arch_map = Kokkos.amdgpu_arch_map
-                for amd_target in spec.variants['amdgpu_target'].value:
-                    try:
-                        arch = amdgpu_arch_map[amd_target]
-                    except KeyError:
-                        pass
-                    else:
-                        options.append(define("Kokkos_ARCH_" + arch.upper(), True))
 
         # ################# System-specific ######################
 
