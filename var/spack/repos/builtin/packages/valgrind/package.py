@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -7,7 +7,6 @@ import glob
 import sys
 
 from spack import *
-from spack.pkg.builtin.boost import Boost
 
 
 class Valgrind(AutotoolsPackage, SourcewarePackage):
@@ -43,7 +42,7 @@ class Valgrind(AutotoolsPackage, SourcewarePackage):
             description='Activates boost support for valgrind')
     variant('only64bit', default=True,
             description='Sets --enable-only64bit option for valgrind')
-    variant('ubsan', default=False,
+    variant('ubsan', default=sys.platform != 'darwin',
             description='Activates ubsan support for valgrind')
 
     conflicts('+ubsan', when='%apple-clang',
@@ -53,12 +52,7 @@ Otherwise with (Apple's) clang there is a linker error:
 clang: error: unknown argument: '-static-libubsan'
 """)
     depends_on('mpi', when='+mpi')
-    depends_on('boost', when='+boost')
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, when='+boost')
+    depends_on('boost+exception+chrono+system+atomic+thread', when='+boost')
 
     depends_on("autoconf", type='build', when='@develop')
     depends_on("automake", type='build', when='@develop')
