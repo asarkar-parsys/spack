@@ -1,4 +1,4 @@
-# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -43,7 +43,7 @@ class Dyninst(CMakePackage):
     variant('stat_dysect', default=False,
             description="Patch for STAT's DySectAPI")
 
-    boost_libs = '+atomic+chrono+date_time+filesystem+system+thread+timer'
+    boost_libs = '+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception'
 
     depends_on('boost@1.61.0:' + boost_libs, when='@10.1.0:')
     depends_on('boost@1.61.0:1.69' + boost_libs, when='@:10.0')
