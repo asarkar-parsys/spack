@@ -319,7 +319,7 @@ class Openmpi(AutotoolsPackage):
     depends_on('pmix', when='+pmix')
     depends_on('libevent', when='+pmix')
 
-    depends_on('openssh', type='run')
+    #depends_on('openssh', type='run')
 
     # CUDA support was added in 1.7
     conflicts('+cuda', when='@:1.6')

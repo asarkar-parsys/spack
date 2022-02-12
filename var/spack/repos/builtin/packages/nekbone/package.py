@@ -28,6 +28,7 @@ class Nekbone(Package):
 
     # dependencies
     depends_on('mpi', when='+mpi')
+    #depends_on('mvapich2@2.3.6', when='+mpi')
 
     @run_before('install')
     def fortran_check(self):
