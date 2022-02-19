@@ -12,16 +12,16 @@ class Nekbone(Package):
        Nek5000 is a high order, incompressible Navier-Stokes solver based on
        the spectral element method."""
 
-    homepage = "https://github.com/Nek5000/Nekbone"
-    git      = "https://github.com/Nek5000/Nekbone.git"
+    homepage = "https://github.com/asarkar-parsys/"
+    git      = "https://github.com/asarkar-parsys/nekbone_2_3_5.git"
 
     tags = ['proxy-app', 'ecp-proxy-app']
 
-    version('develop', branch='master')
-    version('17.0',
-            'ae361cc61368a924398a28a296f675b7f0c4a9516788a7f8fa3c09d787cdf69b',
-            url='https://github.com/Nek5000/Nekbone/archive/v17.0.tar.gz',
-            extension='.tar.gz')
+    version('develop', branch='develop')
+    #version('17.0',
+    #        'ae361cc61368a924398a28a296f675b7f0c4a9516788a7f8fa3c09d787cdf69b',
+    #        url='https://github.com/Nek5000/Nekbone/archive/v17.0.tar.gz',
+    #        extension='.tar.gz')
 
     # Variants
     variant('mpi', default=True, description='Build with MPI')
